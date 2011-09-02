@@ -1,0 +1,10 @@
+# python files
+*.pyc
+*.pyd
+
+# report files
+*.log
+*.txt
+*.html
+logs
+logs/*

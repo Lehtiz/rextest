@@ -8,3 +8,9 @@
 *.html
 logs
 logs/*
+old
+old/*
+*.zip
+
+# bash startup scripts
+*.sh

@@ -6,6 +6,7 @@ import sys
 import time
 import pexpect
 from optparse import OptionParser
+import config
 
 #config
 testlist = []
@@ -28,7 +29,7 @@ def setup():
 
     # list of tests, add new ones here files with the suffixes configured above are tested if they exist
     # and checked for optional parameters
-    testlist.append("js-viewer-server-test.py -f ~/realxtend/bin/scenes/Avatar/avatar.txml")
+    testlist.append("js-viewer-server-test.py -f " + config.rexbinDir + "/scenes/Avatar/avatar.txml")
     testlist.append("avatar-test.py -r 1 -c 1 -j chiru")
 
     #for-loop to check if all testscript files exist

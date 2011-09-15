@@ -44,7 +44,6 @@ def main():
     os._exit(1)
 
 def operations(numberOfRuns):
-
     global avatarLogs
     global timeStamp
 
@@ -56,64 +55,49 @@ def operations(numberOfRuns):
     timeStamp = time.strftime("%Y-%m-%dT%H:%M:%S%Z", time.localtime())
     avatarLogs = logsDir + "/logs_" + timeStamp
     os.makedirs(avatarLogs)
-
+    #change working directory for running tundra
     os.chdir(rexbinDir)
-
+    
     for i in range(1,numberOfRuns+1):
         run_clients(numberOfClients, i)
-
     os.chdir(scriptDir)
 
 def run_clients(numberOfClients, i):
-
     for j in range(1,numberOfClients+1):
-        
         #os.name options: 'posix', 'nt', 'os2', 'mac', 'ce' or 'riscos'
         if os.name == 'posix' or os.name == 'mac':
-
-	    #modify wireshark temp folder owner (required for tshark when capturing all devices)
+            #modify wireshark temp folder owner (required for tshark when capturing all devices)
             posixModTempfolder("root")
-
             p1 = Process(target=posixRunTshark, args=(i, j))
             p2 = Process(target=posixRunViewer, args=(i, j))
-
-	    #start tshark
+            #start tshark
             p1.start()
-	    print "writing network log to file captured" + str(i) + "." + str(j) + ".pcap"
-
-	    #start viewer
+            print "writing network log to file captured" + str(i) + "." + str(j) + ".pcap"
+            #start viewer
             p2.start()
-	    print "writing log to file naaliLog" + str(i) + "." + str(j) + ".log"
-
+            print "writing log to file naaliLog" + str(i) + "." + str(j) + ".log"
             running = True
 
         elif os.name == 'nt':	#NOT TESTED
-	    
-	    p1 = Process(target=ntRunTshark, args=(i, j))
+            p1 = Process(target=ntRunTshark, args=(i, j))
             p2 = Process(target=ntRunViewer, args=(i, j))
-
-	    #start tshark
+            #start tshark
             p1.start()
-	    print "writing network log to file captured" + str(i) + "." + str(j) + ".pcap"
-
-	    #start viewer
+            print "writing network log to file captured" + str(i) + "." + str(j) + ".pcap"
+            #start viewer
             p2.start()
-	    print "writing log to file naaliLog" + str(i) + "." + str(j) + ".log"
-
+            print "writing log to file naaliLog" + str(i) + "." + str(j) + ".log"
             running = True
 
         else:
-
-	    print "os not supported"
+            print "os not supported"
 
     #while-loop to check if viewer is running
     while running == True:
-
         if not p2.is_alive():
             running = False
             posixModTempfolder("user")
             p1.terminate()
-
         else:
             time.sleep(1)
 
@@ -158,10 +142,9 @@ if __name__ == "__main__":
     if options.numberOfRuns:
         numberOfRuns = options.numberOfRuns
     if options.numberOfClients:
-	numberOfClients = options.numberOfClients
+        numberOfClients = options.numberOfClients
     if options.js == "local":
-	js = scriptDir + "/autoConnectLocal.js"
+        js = scriptDir + "/autoConnectLocal.js"
     if options.js == "chiru":
-	js = scriptDir + "/autoConnect.js"
-
+        js = scriptDir + "/autoConnect.js"
     main()

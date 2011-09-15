@@ -29,7 +29,7 @@ else{
 var randomnumber=Math.floor(Math.random()*100);
 if(isserver == false){
     print("client");
-    client.Login("localhost",2345,"Guest"+randomnumber.toString()," ","udp");
+    //client.Login("localhost",2345,"Guest"+randomnumber.toString()," ","udp");
     var scene = framework.Scene();
     var myScene = scene.GetDefaultSceneRaw();
     main();

@@ -33,10 +33,9 @@ GITHUBREPO="rex-test-autoreport/issueReportTest" # e.g. "projectowner/project"
 # OPTIONS
 #
 # Option for preserving test output files after archive has been created
-# default true
-configPreserveLogs = True
+configPreserveLogs = False
 # Option for moving test output files to an old archives folder (debug-standalone-run)
-# default true, if preserveLogs is set to false option is ignored
+# if preserveLogs is set to false option is ignored
 configMoveOld = False
 # Option for cleaning up (removing temp files) the the folder after running the script
 # default true
@@ -57,6 +56,7 @@ includeMachineInfo = True
 TEST0 = "Example-skeleton"
 TEST1 = "js-viewer-server-test"
 TEST2 = "avatar-test"
+TEST3 = "launchtundra"
 # misc
 tempCount = "count.txt"
 tempErrors = "errors.txt"
@@ -149,6 +149,25 @@ def avatarTest():
     outputFile = glob.glob(logDir + '/*/*') #everything in outputDir
     operation()
 
+def launchTundra():
+    global testName
+    global testComment
+    global errorPattern
+    global logDir
+    global logFile
+    global outputFile
+
+    testName = TEST3
+    testComment = "This test launches tundra2 with given parameters"
+    logDir = "logs/launchtundra"
+    errorPattern = [
+        'Result: false'
+    ]
+    logFile = glob.glob(logDir + '/*.out')
+    #files included in the zip archive
+    outputFile = glob.glob(logDir + '/*') #everything in outputDir, script presumes test outputs everything to its own output folder, files can also be added to a list individually
+    operation()
+
 def operation():
     global html
 
@@ -162,19 +181,19 @@ def operation():
         createArchive()
         if configUploadFile:
             uploadFile()
-        if not configPreserveLogs:
-            #remove files
-            for f in outputFile:
-                os.remove(f)
-            #remove dir
-            #os.removedirs(logDir)
-            shutil.rmtree(logDir, ignore_errors=True)
-        else:
-            #relocate already archieved files
-            if configMoveOld:
-               moveOld()
         if configCreateGithubIssue:
-            createGithubIssue()
+            createGithubIssue()      
+    if not configPreserveLogs:
+        #remove files
+        for f in outputFile:
+            os.remove(f)
+        #remove dir
+        #os.removedirs(logDir)
+        shutil.rmtree(logDir, ignore_errors=True)
+    else:
+        #relocate already archieved files
+        if configMoveOld:
+            moveOld()
     if configCleanUp:
         cleanUp()
     print "Finished..."
@@ -184,6 +203,8 @@ def whichTestWasRun(option):
         jsViewerServerTest()
     elif option == TEST2:
         avatarTest()
+    elif option == TEST3:
+        launchTundra()
     else:
         print("Error: test config not found")
 
@@ -271,7 +292,7 @@ def summaryOperations(htmlReportFile, option, *fileName):
     elif option == 'errors':
         htmlReportFile.write("<pre>" + errorOutput + "</pre><hr /><h3>Files:</h3><ul>")
     elif option == 'add':
-        htmlReportFile.write("<li>File: <a href=" + str(fileName) +">" + str(fileName)[2:-3] + "</a></li>") # [2:-3] strip list brackets ('xxx',) --> xxx
+        htmlReportFile.write("<li>File: <a href=" + str(fileName)[2:-3] +">" + str(fileName)[2:-3] + "</a></li>") # [2:-3] strip list brackets ('xxx',) --> xxx
     elif option == 'total':
         htmlReportFile.write("</ul><hr /><p>Total files: " + str(len(outputFile)) + "</p>")
     elif option == 'stop':

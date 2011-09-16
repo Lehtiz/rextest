@@ -161,6 +161,7 @@ def launchTundra():
     testComment = "This test launches tundra2 with given parameters"
     logDir = "logs/launchtundra"
     errorPattern = [
+        'FAIL: ',
         'Result: false'
     ]
     logFile = glob.glob(logDir + '/*.out')
